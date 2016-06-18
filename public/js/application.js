@@ -35,6 +35,7 @@ $(document).ready(function(){
 
   recognition.onresult = function(event){
     recognition.stop()
+    $("#pictures").textContent = ""
     var text = event.results[0][0].transcript
     var split = text.split(" ").join(",")
     var confidence = event.results[0][0].confidence
@@ -46,15 +47,24 @@ $(document).ready(function(){
 
       query.textContent = text
       diagnostic.textContent = "click again for a new query"
-      var request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&tags=" + split + "tags_mode=any&page=1&per_page=10",
+      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&tags=" + split + "tags_mode=any&page=1&per_page=10",
       function(response){
-        console.log(response)
-        debugger
         var results = response.children[0].children[0].children
         for (var i = 0; i < results.length; i++) {
+          // response is in XML, try to get JSON
           var photo = response.children[0].children[0].children[i]
-          var id = photo.id
-          $("#pictures").append("<img src=" + results[i].url + "alt=" + results[i].name + "/>")
+          // get photo id, get owner id, make async call to that picture, append picture to #pictures
+          var id = photo.attributes.id.textContent
+          var picture_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id,
+            function(response){
+              var url = response.children[0].children[0].children[12].children[0].textContent
+              var name = response.children[0].children[0].children[1].textContent
+              // debugger
+              $("#pictures").append("<a href='" + url + "'>" + "'<img src='" + url + "'/></a>")
+
+            })
+
+
         }
       })
     }
