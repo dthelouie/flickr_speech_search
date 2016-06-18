@@ -35,9 +35,13 @@ $(document).ready(function(){
 
   recognition.onresult = function(event){
     recognition.stop()
-    $("#pictures").textContent = ""
+    $("#pictures").empty()
     var text = event.results[0][0].transcript
-    var split = text.split(" ").join(",")
+    if (text.includes(" ")){
+      var speech = text.split(" ").join(",")
+    } else {
+      var speech = text
+    }
     var confidence = event.results[0][0].confidence
     console.log("Confidence: " + confidence)
 
@@ -47,7 +51,7 @@ $(document).ready(function(){
 
       query.textContent = text
       diagnostic.textContent = "click again for a new query"
-      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&tags=" + split + "tags_mode=any&page=1&per_page=10",
+      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
         for (var i = 0; i < results.length; i++) {
@@ -57,10 +61,10 @@ $(document).ready(function(){
           var id = photo.attributes.id.textContent
           var picture_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id,
             function(response){
-              var url = response.children[0].children[0].children[12].children[0].textContent
+              var url = response.children[0].children[0].getElementsByTagName("urls")[0].textContent
               var name = response.children[0].children[0].children[1].textContent
-              // debugger
-              $("#pictures").append("<a href='" + url + "'>" + "'<img src='" + url + "'/></a>")
+              debugger
+              $("#pictures").append("<a href='" + url + "'>" + "'<img src='" + url + "' " + "alt='" + name + "'/></a>")
 
             })
 
