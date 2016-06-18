@@ -36,19 +36,28 @@ $(document).ready(function(){
   recognition.onresult = function(event){
     recognition.stop()
     var text = event.results[0][0].transcript
-    query.textContent = text
-    diagnostic.textContent = ""
-    var request = $.get("https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=ee629647787b1fa5744734a81c4419a3&user_id=61896653@N06&format=json&per_page=20",
-    function(response){
-        results = response.blogs
-        for (var i = 0; i < results.length, i ++){
+    var split = text.split(" ").join(",")
+    var confidence = event.results[0][0].confidence
+    console.log("Confidence: " + confidence)
+
+    if (confidence < 0.65) {
+      diagnostic.textContent = "didn't quite catch that one"
+    } else {
+
+      query.textContent = text
+      diagnostic.textContent = "click again for a new query"
+      var request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&tags=" + split + "tags_mode=any&page=1&per_page=10",
+      function(response){
+        console.log(response)
+        debugger
+        var results = response.children[0].children[0].children
+        for (var i = 0; i < results.length; i++) {
+          var photo = response.children[0].children[0].children[i]
+          var id = photo.id
           $("#pictures").append("<img src=" + results[i].url + "alt=" + results[i].name + "/>")
         }
-    })
-
-    request.done(function(response){
-      console.log(response)
-    })
+      })
+    }
   }
 
   recognition.onspeechend = function(){
