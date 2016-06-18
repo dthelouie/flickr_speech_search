@@ -38,6 +38,17 @@ $(document).ready(function(){
     var text = event.results[0][0].transcript
     query.textContent = text
     diagnostic.textContent = ""
+    var request = $.get("https://api.flickr.com/services/rest/?method=flickr.people.getPublicPhotos&api_key=ee629647787b1fa5744734a81c4419a3&user_id=61896653@N06&format=json&per_page=20",
+    function(response){
+        results = response.blogs
+        for (var i = 0; i < results.length, i ++){
+          $("#pictures").append("<img src=" + results[i].url + "alt=" + results[i].name + "/>")
+        }
+    })
+
+    request.done(function(response){
+      console.log(response)
+    })
   }
 
   recognition.onspeechend = function(){
