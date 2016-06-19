@@ -1,0 +1,33 @@
+body {
+  margin: 2%;
+}
+
+#query{
+  margin: 10%;
+  font-size: 2em;
+  text-align: center;
+}
+
+#start {
+  display: inline;
+}
+.row {
+  display: inline;
+}
+
+.picture{
+  display: inline-block;
+  margin: 2%;
+}
+
+.card-top{
+  font-size: 3em;
+}
+
+img{
+  width: 18em;
+}
+
+html{
+  background-color: #cfd8dc;
+}

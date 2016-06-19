@@ -25,8 +25,9 @@ $(document).ready(function(){
       navigator.getUserMedia({audio: true}, onSuccess, onFail);
     }
     function onSuccess(){
+      $("#mic-icon")[0].textContent = "mic"
       recognition.start();
-      diagnostic.textContent = "listening"
+      diagnostic.textContent = "Listening"
     }
 
     function onFail(){
@@ -36,7 +37,8 @@ $(document).ready(function(){
 
   recognition.onresult = function(event){
     recognition.stop()
-    $("#pictures").empty()
+    $("#mic-icon")[0].textContent = "mic_none"
+
     var text = event.results[0][0].transcript
     if (text.includes(" ")){
       var speech = text.split(" ").join(",")
@@ -47,12 +49,12 @@ $(document).ready(function(){
     console.log("Confidence: " + confidence)
 
     if (confidence < 0.65) {
-      diagnostic.textContent = "didn't quite catch that one"
+      diagnostic.textContent = "Didn't quite catch that one"
     } else {
-
+      $("#pictures").empty()
       query.textContent = text
-      diagnostic.textContent = "click again for a new query"
-      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&sort=relevance",
+      diagnostic.textContent = "Click again for a new query"
+      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=25&content_type=1&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
         for (var i = 0; i < results.length; i++) {
@@ -68,7 +70,7 @@ $(document).ready(function(){
               //     var info = response.children[0].children[0]
               //     var web_url = info.getElementsByTagName("urls")[0].textContent
               //     var name = info.children[1].textContent
-                  $("#pictures").append("<div><a href='" + source_url + "'>" + "<img src='" + source_url + "' " + "alt='" + name + "'/></a></div>")
+                  $("#pictures").append("<div class='picture'> <a href='" + source_url + "'>" + "<img src='" + source_url + "' " + "alt='" + name + "'/></a></div>")
                 // })
             }
           )
@@ -79,15 +81,18 @@ $(document).ready(function(){
 
   recognition.onspeechend = function(){
     recognition.stop()
+    $("#mic-icon")[0].textContent = "mic_none"
   }
 
 
   recognition.onnomatch = function(event){
     diagnostic.textContent = "nope!"
+    $("#mic-icon")[0].textContent = "mic_none"
   }
 
   recognition.onerror = function(event) {
-    diagnostic.textContent = "didn't quite hear that one..."
+    diagnostic.textContent = "Didn't quite catch that one..."
+    $("#mic-icon")[0].textContent = "mic_none"
   }
 
 })
