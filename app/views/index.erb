@@ -1,12 +1,24 @@
 <script type="text/javascript" src="/js/application.js"></script>
 
-<h1>Search Flickr With Your Voice!</h1>
-<div>
-  <button id="start">Listen!</button>
-</div>
+<h1 id="header" class="flow-text white-text card-panel light-blue darken-2 z-depth-2">Search Flickr With Your Voice!</h1>
 
-<p>Your Query: <span id="query"></span></p>
+    <div class="row">
+      <div class="col s20 m6">
+        <div class="card grey lighten-4 z-depth-2">
+          <div class="card-content red-text">
+            <span class="card-top">Your Query:</span>
+              <div class="query_space"><span class="red-text" id="query">
 
-<p>Information: <span id="output"></span></p>
+              </span></div>
+          </div>
+          <div class="card-action">
+            <span class="card-action red-text" id="output"></span>
+            <button class="material-icons btn waves-effect red right" id="start">Listen!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 
 <div id="pictures"></div>

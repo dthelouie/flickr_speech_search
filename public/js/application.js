@@ -26,7 +26,7 @@ $(document).ready(function(){
     }
     function onSuccess(){
       recognition.start();
-      diagnostic.textContent = "listening"
+      diagnostic.textContent = "Listening"
     }
 
     function onFail(){
@@ -47,11 +47,11 @@ $(document).ready(function(){
     console.log("Confidence: " + confidence)
 
     if (confidence < 0.65) {
-      diagnostic.textContent = "didn't quite catch that one"
+      diagnostic.textContent = "Didn't quite catch that one"
     } else {
 
       query.textContent = text
-      diagnostic.textContent = "click again for a new query"
+      diagnostic.textContent = "Click again for a new query"
       var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
@@ -68,7 +68,7 @@ $(document).ready(function(){
               //     var info = response.children[0].children[0]
               //     var web_url = info.getElementsByTagName("urls")[0].textContent
               //     var name = info.children[1].textContent
-                  $("#pictures").append("<div><a href='" + source_url + "'>" + "<img src='" + source_url + "' " + "alt='" + name + "'/></a></div>")
+                  $("#pictures").append("<div class='picture'> <a href='" + source_url + "'>" + "<img src='" + source_url + "' " + "alt='" + name + "'/></a></div>")
                 // })
             }
           )
@@ -87,7 +87,7 @@ $(document).ready(function(){
   }
 
   recognition.onerror = function(event) {
-    diagnostic.textContent = "didn't quite hear that one..."
+    diagnostic.textContent = "Didn't quite catch that one..."
   }
 
 })

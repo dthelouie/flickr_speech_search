@@ -1,0 +1,29 @@
+body {
+  margin: 2%;
+}
+
+/*.query_space{
+  margin: 10%
+}*/
+
+#query{
+  margin: 10%;
+  font-size: 2em;
+  text-align: center;
+}
+
+#start {
+  display: inline;
+}
+.row {
+  display: inline;
+  width: 30%
+}
+
+.picture{
+  margin: 2%;
+}
+
+.card-top{
+  font-size: 3em;
+}
