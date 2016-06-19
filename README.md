@@ -1,7 +1,7 @@
 # Flickr Speech Search
 * This is an application that will listen to your voice and search Flickr for pictures relevant to your speech query.
 
-### To start the app, navigate to this directory, run the following commands in console:
+### To start the app, clone this repo, navigate to the directory, and run the following commands in console:
 * "bundle install"
 * "be shotgun"
 
