@@ -25,6 +25,7 @@ $(document).ready(function(){
       navigator.getUserMedia({audio: true}, onSuccess, onFail);
     }
     function onSuccess(){
+      $("#mic-icon")[0].textContent = "mic"
       recognition.start();
       diagnostic.textContent = "Listening"
     }
@@ -36,6 +37,7 @@ $(document).ready(function(){
 
   recognition.onresult = function(event){
     recognition.stop()
+    $("#mic-icon")[0].textContent = "mic_none"
     $("#pictures").empty()
     var text = event.results[0][0].transcript
     if (text.includes(" ")){
@@ -79,15 +81,18 @@ $(document).ready(function(){
 
   recognition.onspeechend = function(){
     recognition.stop()
+    $("#mic-icon")[0].textContent = "mic_none"
   }
 
 
   recognition.onnomatch = function(event){
     diagnostic.textContent = "nope!"
+    $("#mic-icon")[0].textContent = "mic_none"
   }
 
   recognition.onerror = function(event) {
     diagnostic.textContent = "Didn't quite catch that one..."
+    $("#mic-icon")[0].textContent = "mic_none"
   }
 
 })
