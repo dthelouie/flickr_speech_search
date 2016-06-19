@@ -2,8 +2,8 @@
 * This is an application that will listen to your voice and search Flickr for pictures relevant to your speech query.
 
 ### To start the app, navigate to this directory, run the following commands in console:
-** "bundle install"
-** "be shotgun"
+* "bundle install"
+* "be shotgun"
 
 (The Sinatra Skeleton was used here so we could use the local machine as a server.  Using HTML and JavaScript files without a server resulted in certain speech recognition methods being blocked by Chrome.)
 
