@@ -2,10 +2,6 @@ body {
   margin: 2%;
 }
 
-/*.query_space{
-  margin: 10%
-}*/
-
 #query{
   margin: 10%;
   font-size: 2em;
@@ -17,7 +13,6 @@ body {
 }
 .row {
   display: inline;
-  width: 30%
 }
 
 .picture{
@@ -31,4 +26,8 @@ body {
 
 img{
   width: 18em;
+}
+
+html{
+  background-color: #cfd8dc;
 }
