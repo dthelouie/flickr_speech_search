@@ -26,6 +26,7 @@ $(document).ready(function(){
     }
     function onSuccess(){
       recognition.start();
+      diagnostic.textContent = "listening"
     }
 
     function onFail(){
@@ -51,7 +52,7 @@ $(document).ready(function(){
 
       query.textContent = text
       diagnostic.textContent = "click again for a new query"
-      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&extras=url_o&sort=relevance",
+      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
         for (var i = 0; i < results.length; i++) {
@@ -59,10 +60,9 @@ $(document).ready(function(){
           // get photo id, make async call to that picture, append picture to #pictures inside img and a tags
           var id = photo.attributes.id.textContent
           var secret = photo.attributes.secret.textContent
-
           var picture_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret,
             function(response){
-              var source_url = response.children[0].children[0].children[5].attributes.source.textContent
+              var source_url = response.children[0].children[0].getElementsByTagName("size")[5].attributes.source.textContent
               // var info_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret,
               //   function(response){
               //     var info = response.children[0].children[0]
