@@ -51,24 +51,27 @@ $(document).ready(function(){
 
       query.textContent = text
       diagnostic.textContent = "click again for a new query"
-      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&sort=relevance",
+      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&extras=url_o&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
         for (var i = 0; i < results.length; i++) {
-          // response is in XML, try to get JSON
           var photo = response.children[0].children[0].children[i]
-          // get photo id, get owner id, make async call to that picture, append picture to #pictures
+          // get photo id, make async call to that picture, append picture to #pictures inside img and a tags
           var id = photo.attributes.id.textContent
-          var picture_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id,
+          var secret = photo.attributes.secret.textContent
+
+          var picture_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret,
             function(response){
-              var url = response.children[0].children[0].getElementsByTagName("urls")[0].textContent
-              var name = response.children[0].children[0].children[1].textContent
-              debugger
-              $("#pictures").append("<a href='" + url + "'>" + "'<img src='" + url + "' " + "alt='" + name + "'/></a>")
-
-            })
-
-
+              var source_url = response.children[0].children[0].children[5].attributes.source.textContent
+              // var info_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret,
+              //   function(response){
+              //     var info = response.children[0].children[0]
+              //     var web_url = info.getElementsByTagName("urls")[0].textContent
+              //     var name = info.children[1].textContent
+                  $("#pictures").append("<div><a href='" + source_url + "'>" + "<img src='" + source_url + "' " + "alt='" + name + "'/></a></div>")
+                // })
+            }
+          )
         }
       })
     }
