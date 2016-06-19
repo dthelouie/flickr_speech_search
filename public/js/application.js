@@ -10,13 +10,14 @@ $(document).ready(function(){
   var speechRecognitionList = new SpeechGrammarList();
   speechRecognitionList.addFromString(grammar, 1);
   recognition.grammars = speechRecognitionList;
-  recognition.continuous = false;
+  recognition.continuous = true;
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
   var diagnostic = document.querySelector('#output');
   var query = document.querySelector('#query');
+  var query_count = 0
 
   $("#start").click(function(){
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
@@ -35,25 +36,31 @@ $(document).ready(function(){
     }
   })
 
-  recognition.onresult = function(event){
+  $("#end").click(function(){
     recognition.stop()
     $("#mic-icon")[0].textContent = "mic_none"
+  })
 
-    var text = event.results[0][0].transcript
+  recognition.onresult = function(event){
+    // recognition.stop()
+    // $("#mic-icon")[0].textContent = "mic_none"
+
+    var text = event.results[query_count][0].transcript
     if (text.includes(" ")){
       var speech = text.split(" ").join(",")
     } else {
       var speech = text
     }
-    var confidence = event.results[0][0].confidence
+    var confidence = event.results[query_count][0].confidence
     console.log("Confidence: " + confidence)
+    query_count += 1
 
     if (confidence < 0.65) {
       diagnostic.textContent = "Didn't quite catch that one"
     } else {
       $("#pictures").empty()
       query.textContent = text
-      diagnostic.textContent = "Click again for a new query"
+      diagnostic.textContent = "Speak again for a new query"
       var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=25&content_type=1&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
@@ -79,20 +86,24 @@ $(document).ready(function(){
     }
   }
 
+  recognition.onspeechstart = function(){
+    $("#mic-icon")[0].textContent = "mic"
+  }
+
   recognition.onspeechend = function(){
-    recognition.stop()
-    $("#mic-icon")[0].textContent = "mic_none"
+    // recognition.stop()
+    // $("#mic-icon")[0].textContent = "mic_none"
   }
 
 
   recognition.onnomatch = function(event){
-    diagnostic.textContent = "nope!"
-    $("#mic-icon")[0].textContent = "mic_none"
+    diagnostic.textContent = "Try again!"
+    // $("#mic-icon")[0].textContent = "mic_none"
   }
 
   recognition.onerror = function(event) {
     diagnostic.textContent = "Didn't quite catch that one..."
-    $("#mic-icon")[0].textContent = "mic_none"
+    // $("#mic-icon")[0].textContent = "mic_none"
   }
 
 })
