@@ -21,9 +21,14 @@ body {
 }
 
 .picture{
+  display: inline-block;
   margin: 2%;
 }
 
 .card-top{
   font-size: 3em;
+}
+
+img{
+  width: 18em;
 }

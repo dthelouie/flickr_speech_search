@@ -38,7 +38,7 @@ $(document).ready(function(){
   recognition.onresult = function(event){
     recognition.stop()
     $("#mic-icon")[0].textContent = "mic_none"
-    $("#pictures").empty()
+
     var text = event.results[0][0].transcript
     if (text.includes(" ")){
       var speech = text.split(" ").join(",")
@@ -51,10 +51,10 @@ $(document).ready(function(){
     if (confidence < 0.65) {
       diagnostic.textContent = "Didn't quite catch that one"
     } else {
-
+      $("#pictures").empty()
       query.textContent = text
       diagnostic.textContent = "Click again for a new query"
-      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=10&content_type=1&sort=relevance",
+      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=25&content_type=1&sort=relevance",
       function(response){
         var results = response.children[0].children[0].children
         for (var i = 0; i < results.length; i++) {
