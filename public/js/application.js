@@ -15,8 +15,8 @@ $(document).ready(function(){
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  var diagnostic = document.querySelector('#output');
-  var query = document.querySelector('#query');
+  var diagnostic = $("#output")[0];
+  var query = $("#query")[0];
   var query_count = 0;
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
@@ -51,9 +51,7 @@ $(document).ready(function(){
 
     var text = event.results[query_count][0].transcript;
     if (text.includes(" ")){
-      var speech = text.split(" ").join(",");
-    } else {
-      var speech = text;
+      var speech = text.replace(" ",",")
     }
     var confidence = event.results[query_count][0].confidence;
     console.log("Confidence: " + confidence);
@@ -69,7 +67,7 @@ $(document).ready(function(){
       function(response){
         var results = response.children[0].children[0].children;
         for (var i = 0; i < results.length; i++) {
-          var photo = response.children[0].children[0].children[i];
+          var photo = results[i];
           // get photo id, make async call to that picture, append picture to #pictures inside img and a tags
           var id = photo.attributes.id.textContent;
           var secret = photo.attributes.secret.textContent;
