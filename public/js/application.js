@@ -52,6 +52,8 @@ $(document).ready(function(){
     var text = event.results[query_count][0].transcript;
     if (text.includes(" ")){
       var speech = text.replace(" ",",")
+    } else {
+      var speech = text
     }
     var confidence = event.results[query_count][0].confidence;
     console.log("Confidence: " + confidence);
