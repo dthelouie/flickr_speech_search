@@ -102,7 +102,6 @@ $(document).ready(function(){
       var speech = speech.replace(" ",",")
     }
     $("#pictures").empty();
-    debugger
     var resultsRequested = $("#results-requested")[0].value
     if (resultsRequested == ""){
       resultsRequested = 10
