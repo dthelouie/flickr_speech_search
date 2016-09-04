@@ -15,9 +15,12 @@ $(document).ready(function(){
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
+  $("#next-page").hide()
+  $("#previous-page").hide()
   var diagnostic = $("#output")[0];
   var query = $("#query")[0];
-  var query_count = 0;
+  var queryCount = 0;
+  var pageCount = 1;
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
 
@@ -35,7 +38,7 @@ $(document).ready(function(){
   $("#start").click(function(){
     $("#mic-icon")[0].textContent = "mic";
     recognition.start();
-    query_count = 0;
+    queryCount = 0;
     diagnostic.textContent = "Listening";
   })
 
@@ -48,16 +51,13 @@ $(document).ready(function(){
   recognition.onresult = function(event){
     // recognition.stop()
     // $("#mic-icon")[0].textContent = "mic_none"
+    pageCount = 1
+    $("#previous-page").hide()
+    var text = event.results[queryCount][0].transcript;
 
-    var text = event.results[query_count][0].transcript;
-    if (text.includes(" ")){
-      var speech = text.replace(" ",",")
-    } else {
-      var speech = text
-    }
-    var confidence = event.results[query_count][0].confidence;
+    var confidence = event.results[queryCount][0].confidence;
     console.log("Confidence: " + confidence);
-    query_count += 1;
+    queryCount += 1;
 
     if (confidence < 0.65) {
       diagnostic.textContent = "Didn't quite catch that one";
@@ -65,28 +65,8 @@ $(document).ready(function(){
       $("#pictures").empty();
       query.textContent = text;
       diagnostic.textContent = "Speak again for a new query";
-      var id_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=1&per_page=25&content_type=1&sort=relevance");
-      id_request.done(function(response){
-        var results = response.children[0].children[0].children;
-        for (var i = 0; i < results.length; i++) {
-          var photo = results[i];
-          // get photo id, make async call to that picture, append picture to #pictures inside img and a tags
-          var id = photo.attributes.id.textContent;
-          var secret = photo.attributes.secret.textContent;
-          var picture_request = $.ajax({url: "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret, async: false})
-            picture_request.done(function(response){
-              var source_url = response.children[0].children[0].getElementsByTagName("size")[5].attributes.source.textContent;
-              var info_request = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret);
-                info_request.done(function(response){
-                  var info = response.children[0].children[0];
-                  var web_url = info.getElementsByTagName("urls")[0].textContent;
-                  var name = info.children[1].textContent;
-                  $("#pictures").append("<div class='picture'> <a href='" + web_url + "' target='_blank' >" + "<img src='" + source_url + "' " + "alt='" + name + "'/></a></div>");
-                })
-            }
-          )
-        }
-      })
+      getPictures(pageCount, text)
+      $("#next-page").show()
     }
   };
 
@@ -103,4 +83,51 @@ $(document).ready(function(){
     diagnostic.textContent = "Didn't quite catch that one...";
   };
 
+  $("#next-page").click(function(){
+    pageCount += 1
+    getPictures(pageCount, query.textContent)
+    $("#previous-page").show()
+  })
+
+  $("#previous-page").click(function(){
+    pageCount -= 1
+    getPictures(pageCount, query.textContent)
+    if (pageCount <= 1) {
+      $("#previous-page").hide()
+    }
+  })
+
+  var getPictures = function(pageNumber, speech){
+    if (speech.includes(" ")){
+      var speech = speech.replace(" ",",")
+    }
+    $("#pictures").empty();
+    debugger
+    var resultsRequested = $("#results-requested")[0].value
+    if (resultsRequested == ""){
+      resultsRequested = 10
+    }
+    var idRequest = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ee629647787b1fa5744734a81c4419a3&text=" + speech + "&tags_mode=all&page=" + pageCount + "&per_page=" + resultsRequested + "&content_type=1&sort=relevance");
+    idRequest.done(function(response){
+      var results = response.children[0].children[0].children;
+      for (var i = 0; i < results.length; i++) {
+        var photo = results[i];
+        // get photo id, make async call to that picture, append picture to #pictures inside img and a tags
+        var id = photo.attributes.id.textContent;
+        var secret = photo.attributes.secret.textContent;
+        var pictureRequest = $.ajax({url: "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret, async: false})
+          pictureRequest.done(function(response){
+            var sourceUrl = response.children[0].children[0].getElementsByTagName("size")[5].attributes.source.textContent;
+            var infoRequest = $.get("https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=ee629647787b1fa5744734a81c4419a3&photo_id=" + id + "&secret=" + secret);
+              infoRequest.done(function(response){
+                var info = response.children[0].children[0];
+                var webUrl = info.getElementsByTagName("urls")[0].textContent;
+                var name = info.children[1].textContent;
+                $("#pictures").append("<div class='picture'> <a href='" + webUrl + "' target='_blank' >" + "<img src='" + sourceUrl + "' " + "alt='" + name + "'/></a></div>");
+              })
+          }
+        )
+      }
+    })
+  }
 })
